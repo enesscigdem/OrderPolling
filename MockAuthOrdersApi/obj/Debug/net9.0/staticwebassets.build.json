@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "A1crKtLORZiXmm2z3NdEJxT21fvOICrwo1AJfpsWS5o=",
+  "Source": "MockAuthOrdersApi",
+  "BasePath": "_content/MockAuthOrdersApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
