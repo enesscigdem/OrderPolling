@@ -1,4 +1,4 @@
-Bu soruyu gerçek hayatta nasıl yapacaksam öyle kurdum. Amacım basit: **5 dakikada bir** sipariş API’sini çağıran bir servis yazmak, çağrıdan önce **access token** almak, token’ın süresi dolmadan **erken yenilemek** ve **token alma isteğini saatte en fazla 5 kere** yapmak.
+Bu soruyu gerçek hayatta nasıl yapacaksam öyle kurdum. Amacım: **5 dakikada bir** sipariş API’sini çağıran bir servis yazmak, çağrıdan önce **access token** almak, token’ın süresi dolmadan **erken yenilemek** ve **token alma isteğini saatte en fazla 5 kere** yapmak.
 
 Bunun için iki küçük proje hazırladım:
 
@@ -12,7 +12,7 @@ Bunun için iki küçük proje hazırladım:
 * **Worker (BackgroundService)**: Her turda siparişleri çekiyor. Varsayılan periyot **300 sn**.
 * **TokenProvider**:
 
-  * Token’ı **hafızada** tutuyorum. Süre dolmadan biraz önce **otomatik yeniliyorum** (skew).
+  * Token’ı **hafızada** tutuyorum. Süre dolmadan biraz önce **otomatik yeniliyorum**.
   * Aynı anda birden fazla thread token almasın diye **SemaphoreSlim** kullandım.
   * Son 1 saatte kaç kez token aldığımı **kuyrukta tutuyorum**; sayı 5’e dayanırsa yeni token istemiyorum.
 * **OrdersClient**: `IHttpClientFactory` ile üretilen `HttpClient`. Her istekten önce `TokenProvider`dan token alıp `Authorization: Bearer` ekleyerek `/orders`’ı çağırıyor.
@@ -31,7 +31,7 @@ Bunun için iki küçük proje hazırladım:
 * **IHttpClientFactory**
 * **Options pattern** ile ayarlar (Auth / Api / Polling)
 * **SemaphoreSlim** (thread-safe yenileme)
-* **Swagger/OpenAPI** (mock API’de test kolaylığı)
+* **Swagger/OpenAPI**
 
 ---
 
@@ -59,17 +59,17 @@ Bunun için iki küçük proje hazırladım:
 3. `TokenProvider`:
 
    * Token geçerli mi? **Evet** → devam.
-   * **Hayır** → Semaphore ile kilitle, saatlik sayaca bak. Limit dolmak üzereyse **token isteme**; değilse `/oauth/token`’dan yeni token al, süresini hesapla (skew’i düş).
+   * **Hayır** → Semaphore ile kilitle, saatlik sayaca bak. Limit dolmak üzereyse **token isteme**; değilse `/oauth/token`’dan yeni token al, süresini hesapla.
 4. `Authorization: Bearer …` ile **/orders** çağrılır, siparişler gelir.
 
 ---
 
 ## Küçük ekstralar ;
 
-* Swagger’dan uçtan uca **manuel test** rahat.
+* Swagger’dan uçtan uca **manuel test** daha rahat oluyor.
 * Tüm ayarlar **appsettings**’te; tek yerden yönetiyorum.
-* Yenilemeyi **erken** yaptığım için expiry’de sürpriz yaşamıyorum.
-* Token alma işi **tek thread** ile yapılıyor (yarış yok).
+* Yenilemeyi **erken** yaptığım için expiry’de sorun yaşamıyorum.
+* Token alma kısmı **tek thread** ile yapılıyor.
 
 ---
 
